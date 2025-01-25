@@ -1,0 +1,10 @@
+{
+    "token": "",
+    "img": "",
+    "mysql": {
+        "host": "",
+        "user": "",
+        "password": "",
+        "database": ""
+    }
+}

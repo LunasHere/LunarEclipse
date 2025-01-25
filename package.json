@@ -1,0 +1,23 @@
+{
+  "name": "discordbot",
+  "version": "0.0.1",
+  "description": "Multipurpose Discord Bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LunasHere/DiscordBot.git"
+  },
+  "author": "Luna",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LunasHere/DiscordBot/issues"
+  },
+  "homepage": "https://github.com/LunasHere/DiscordBot#readme",
+  "dependencies": {
+    "discord.js": "^14.17.3",
+    "mysql2": "^3.12.0"
+  }
+}
