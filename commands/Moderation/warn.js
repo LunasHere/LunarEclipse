@@ -22,15 +22,16 @@ module.exports = {
             console.error(err);
             return interaction.reply({ content: 'An error occurred while adding the warn', ephemeral: true });
         });
-        const channel = interaction.guild.channels.cache.find(ch => ch.name === 'mod-logs');
-        if (!channel) return;
-        const modembed = new EmbedBuilder()
-            .setDescription(`**${user.username}#${user.discriminator}** has been warned by **${interaction.user}** for **${reason}**`)
-            .addFields({ name: 'Warnings', value: `${warns + 1}`, inline: true }, { name: 'Case ID', value: `${caseid}`, inline: true })
-            .setAuthor({ name: `${interaction.client.config.botname} Moderation`, iconURL: `${interaction.client.config.boticon}` })
-            .setColor(0xFF0000)
-            .setTimestamp();
-        channel.send({ embeds: [modembed] });
+        const channel = interaction.client.settingsManager.getGuildSettings(interaction.guild).modlogchannel;
+        if (channel) {
+            const modembed = new EmbedBuilder()
+                .setDescription(`**${user.username}#${user.discriminator}** has been warned by **${interaction.user}** for **${reason}**`)
+                .addFields({ name: 'Warnings', value: `${warns + 1}`, inline: true }, { name: 'Case ID', value: `${caseid}`, inline: true })
+                .setAuthor({ name: `${interaction.client.config.botname} Moderation`, iconURL: `${interaction.client.config.boticon}` })
+                .setColor(0xFF0000)
+                .setTimestamp();
+            channel.send({ embeds: [modembed] });
+        }
 
         const userembed = new EmbedBuilder()
             .setDescription(`You have been warned in **${interaction.guild.name}**.  Please be sure to read the rules and follow them.  If you continue to break the rules, you will be kicked or banned.`)

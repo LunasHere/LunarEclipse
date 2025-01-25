@@ -25,5 +25,15 @@ module.exports = {
             .setTimestamp();
         interaction.reply({ embeds: [embed] });
 
+        const channel = interaction.client.settingsManager.getGuildSettings(interaction.guild).modlogchannel;
+        if (channel) {
+            const modembed = new EmbedBuilder()
+                .setDescription(`**${warn.user}**'s warn with Case ID ${caseid} has been removed by **${interaction.user}**.`)
+                .setAuthor({ name: `${interaction.client.config.botname} Moderation`, iconURL: `${interaction.client.config.boticon}` })
+                .setColor(0xFF0000)
+                .setTimestamp();
+            channel.send({ embeds: [modembed] });
+        }
+
     }
 }
