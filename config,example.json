@@ -1,6 +1,7 @@
 {
     "token": "",
-    "img": "",
+    "botname": "",
+    "boticon": "",
     "mysql": {
         "host": "",
         "user": "",

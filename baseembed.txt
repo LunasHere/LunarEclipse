@@ -1,0 +1,5 @@
+const embed = new EmbedBuilder()
+    .setDescription(`Embed Text`)
+    .setAuthor({ name: `${interaction.client.config.botname} (module name)`, iconURL: `${interaction.client.config.boticon}` })
+    .setColor(0xFF0000)
+    .setTimestamp();
