@@ -1,5 +1,3 @@
-const { resolveColor } = require("discord.js");
-
 class SettingsManager {
     constructor(client) {
         this.client = client;

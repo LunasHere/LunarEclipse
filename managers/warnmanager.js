@@ -1,5 +1,3 @@
-const { resolveColor } = require("discord.js");
-
 class WarnManager {
     constructor(client) {
         this.client = client;
