@@ -27,14 +27,6 @@ module.exports = {
             }
         }).catch(err => console.log(err));
 
-        const embed = new EmbedBuilder()
-            .setDescription(`**${user}** has been unbanned.`)
-            .addFields({ name: 'Reason', value: reason, inline: true })
-            .setAuthor({ name: `${interaction.client.config.botname} Moderation`, iconURL: `${interaction.client.config.boticon}` })
-            .setColor(0xFF0000)
-            .setTimestamp();
-        interaction.channel.send({ embeds: [embed] });
-
         interaction.reply({ content: `**${user}** has been unbanned`, ephemeral: true });
     }
 }
