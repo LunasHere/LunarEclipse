@@ -9,7 +9,7 @@ module.exports = {
         .setDMPermission(false),
     async execute(interaction) {
         const user = interaction.options.getUser('user');
-        const warns = await interaction.client.warnManager.getWarnsForUser(user);
+        const warns = await interaction.client.warnManager.getWarnsForUser(interaction.guild.id, user);
         if (warns.length === 0) {
             const nowarns = new EmbedBuilder()
                 .setAuthor({ name: `${interaction.client.config.botname} Moderation`, iconURL: `${interaction.client.config.boticon}` })
