@@ -1,13 +1,13 @@
 class WarnManager {
     constructor(client) {
         this.client = client;
-        this.client.db.query(`CREATE TABLE IF NOT EXISTS warnings (caseid INT(10), user TEXT, warnedby TEXT, reason TEXT, date TEXT)`);
+        this.client.db.query(`CREATE TABLE IF NOT EXISTS warnings (guildid TEXT, caseid INT(10), user TEXT, warnedby TEXT, reason TEXT, date TEXT)`);
     }
 
     // Get the number of warnings a user has
-    async getNumOfWarns(user) {
+    async getNumOfWarns(guildid, user) {
         return new Promise((resolve, reject) => {
-            this.client.db.query(`SELECT * FROM warnings WHERE user = '${user.id}'`, (err, result) => {
+            this.client.db.query(`SELECT * FROM warnings WHERE user = '${user.id}' AND guildid = '${guildid}'`, (err, result) => {
                 if (err) {
                     console.error(err);
                     return reject(err);
@@ -18,9 +18,9 @@ class WarnManager {
     }
 
     // Add a warning to a user
-    async addWarn(user, by, reason) {
+    async addWarn(guildid, user, by, reason) {
         return new Promise((resolve, reject) => {
-            this.client.db.query(`SELECT * FROM warnings`, (err, result) => {
+            this.client.db.query(`SELECT * FROM warnings WHERE guildid = '${guildid}'`, (err, result) => {
                 if (err) {
                     console.error(err);
                     return reject(err);
@@ -35,7 +35,7 @@ class WarnManager {
                     hour: '2-digit', // numeric, 2-digit
                     minute: '2-digit' // numeric, 2-digit
                 });
-                this.client.db.query(`INSERT INTO warnings (caseid, user, warnedby, reason, date) VALUES (${caseid}, '${user.id}', '${by.username} (${by.id})', '${reason}', '${date + " CST"}')`, (err, result) => {
+                this.client.db.query(`INSERT INTO warnings (guildid, caseid, user, warnedby, reason, date) VALUES (${guildid}, ${caseid}, '${user.id}', '${by.username} (${by.id})', '${reason}', '${date + " CST"}')`, (err, result) => {
                     if (err) {
                         console.error(err);
                         return reject(err);
@@ -47,9 +47,9 @@ class WarnManager {
     }
 
     // Get a warning for a user by caseid
-    async getWarn(caseid) {
+    async getWarn(guildid, caseid) {
         return new Promise((resolve, reject) => {
-            this.client.db.query(`SELECT * FROM warnings WHERE caseid = ${caseid}`, (err, result) => {
+            this.client.db.query(`SELECT * FROM warnings WHERE caseid = '${caseid}' AND guildid = '${guildid}'`, (err, result) => {
                 if (err) {
                     console.error(err);
                     return reject(err);
@@ -62,9 +62,9 @@ class WarnManager {
     }
 
     // Remove a warning for a user by caseid
-    async removeWarn(caseid) {
+    async removeWarn(guildid, caseid) {
         return new Promise((resolve, reject) => {
-            this.client.db.query(`DELETE FROM warnings WHERE caseid = ${caseid}`, (err, result) => {
+            this.client.db.query(`DELETE FROM warnings WHERE caseid = ${caseid} AND guildid = '${guildid}'`, (err, result) => {
                 if (err) {
                     console.error(err);
                     return reject(err);
@@ -76,9 +76,9 @@ class WarnManager {
     }
 
     // Get all warnings for a user
-    async getWarnsForUser(user) {
+    async getWarnsForUser(guildid, user) {
         return new Promise((resolve, reject) => {
-            this.client.db.query(`SELECT * FROM warnings WHERE user = '${user.id}'`, (err, result) => {
+            this.client.db.query(`SELECT * FROM warnings WHERE user = '${user.id}' AND guildid = '${guildid}'`, (err, result) => {
                 if (err) {
                     console.error(err);
                     return reject(err);

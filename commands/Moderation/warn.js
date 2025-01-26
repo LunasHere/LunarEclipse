@@ -14,9 +14,9 @@ module.exports = {
         // Check if the user is trying to warn a bot
         if (user.bot) return interaction.reply({ content: 'You cannot warn a bot', ephemeral: true });
         const reason = interaction.options.getString('reason');
-        const warns = await interaction.client.warnManager.getNumOfWarns(user);
+        const warns = await interaction.client.warnManager.getNumOfWarns(interaction.guild.id, user);
         let caseid;
-        await interaction.client.warnManager.addWarn(user, interaction.user, reason).then(id =>{
+        await interaction.client.warnManager.addWarn(interaction.guild.id, user, interaction.user, reason).then(id =>{
             caseid = id;
         }).catch(err => {
             console.error(err);

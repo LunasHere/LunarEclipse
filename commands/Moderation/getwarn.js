@@ -8,7 +8,7 @@ module.exports = {
         .setDefaultMemberPermissions(PermissionFlagsBits.BanMembers | PermissionFlagsBits.KickMembers),
     async execute(interaction) {
         const caseid = interaction.options.getString('caseid');
-        const warn = await interaction.client.warnManager.getWarn(caseid);
+        const warn = await interaction.client.warnManager.getWarn(interaction.guild.id, caseid);
         if (!warn || warn === null) {
             const nowarn = new EmbedBuilder()
                 .setAuthor({ name: `${interaction.client.config.botname} Moderation`, iconURL: `${interaction.client.config.boticon}` })

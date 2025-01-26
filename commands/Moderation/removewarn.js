@@ -8,7 +8,7 @@ module.exports = {
         .setDefaultMemberPermissions(PermissionFlagsBits.BanMembers | PermissionFlagsBits.KickMembers),
     async execute(interaction) {
         const caseid = interaction.options.getString('caseid');
-        const warn = await interaction.client.warnManager.getWarn(caseid);
+        const warn = await interaction.client.warnManager.getWarn(interaction.guild.id, caseid);
         if (!warn || warn === null) {
             const nowarn = new EmbedBuilder()
                 .setAuthor({ name: `${interaction.client.config.botname} Moderation`, iconURL: `${interaction.client.config.boticon}` })
@@ -17,7 +17,7 @@ module.exports = {
                 .setTimestamp();
             return interaction.reply({ embeds: [nowarn], ephemeral: true });
         }
-        await interaction.client.warnManager.removeWarn(caseid);
+        await interaction.client.warnManager.removeWarn(interaction.guild.id, caseid);
         const embed = new EmbedBuilder()
             .setAuthor({ name: `${interaction.client.config.botname} Moderation`, iconURL: `${interaction.client.config.boticon}` })
             .setDescription(`Warn with Case ID ${caseid} has been removed.`)
