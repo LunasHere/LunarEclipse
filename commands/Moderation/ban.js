@@ -20,15 +20,18 @@ module.exports = {
             return interaction.reply({ content: 'You cannot ban a user with the same or higher role than yourself', ephemeral: true });
         }
         
-        const channel = interaction.client.settingsManager.getSettings(interaction.guild).modlogchannel;
-        if (channel) {
-            const modembed = new EmbedBuilder()
-                .setDescription(`**${user.username}#${user.discriminator}** (ID: ${user.id}) has been banned by **${interaction.user}** for **${reason}**`)
-                .setAuthor({ name: `${interaction.client.config.botname} Moderation`, iconURL: `${interaction.client.config.boticon}` })
-                .setColor(0xFF0000)
-                .setTimestamp();
-            channel.send({ embeds: [modembed] });
-        }
+        await interaction.client.settingsManager.getSettings(interaction.guild).then(settings => {
+            if(settings.modlogchannel) {
+                const channel = interaction.guild.channels.cache.get(settings.modlogchannel);
+                const modembed = new EmbedBuilder()
+                    .setDescription(`**${user.username}#${user.discriminator}** (ID: ${user.id}) has been banned.`)
+                    .setAuthor({ name: `${interaction.client.config.botname} Moderation`, iconURL: `${interaction.client.config.boticon}` })
+                    .addFields({ name: 'Issued By', value: `${interaction.user}`, inline: true}, { name: 'Reason', value: reason, inline: true })
+                    .setColor(0xFF0000)
+                    .setTimestamp();
+                channel.send({ embeds: [modembed] });
+            }
+        }).catch(err => console.log(err));
 
         const userembed = new EmbedBuilder()
             .setDescription(`You have been banned from **${interaction.guild.name}**.  If you feel this ban was unjust, please contact the server owner.`)

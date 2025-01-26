@@ -48,4 +48,18 @@ class SettingsManager {
         });
     }
 
+    async deleteSettings(guild) {
+        return new Promise((resolve, reject) => {
+            this.client.db.query(`DELETE FROM settings WHERE guild = '${guild.id}'`, (err, result) => {
+                if (err) {
+                    console.error(err);
+                    return reject(err);
+                }
+                resolve();
+            });
+        });
+    }
+
 }
+
+module.exports = SettingsManager;

@@ -14,15 +14,18 @@ module.exports = {
         const ban = bans.find(ban => ban.user.id === user.id);
         if (!ban) return interaction.reply({ content: 'User is not banned', ephemeral: true });
         await interaction.guild.bans.remove(user, { reason: reason });
-        const channel = interaction.client.settingsManager.getGuildSettings(interaction.guild).modlogchannel;
-        if (channel) {
-            const modembed = new EmbedBuilder()
-                .setDescription(`**${user.username}#${user.discriminator}** has been unbanned by **${interaction.user}** for **${reason}**`)
-                .setAuthor({ name: `${interaction.client.config.botname} Moderation`, iconURL: `${interaction.client.config.boticon}` })
-                .setColor(0xFF0000)
-                .setTimestamp();
-            channel.send({ embeds: [modembed] });
-        }
+        await interaction.client.settingsManager.getSettings(interaction.guild).then(settings => {
+            if(settings.modlogchannel) {
+                const channel = interaction.guild.channels.cache.get(settings.modlogchannel);
+                const modembed = new EmbedBuilder()
+                    .setDescription(`**${user.username}#${user.discriminator}** (User ID: ${user.id}) has been unbanned.`)
+                    .setAuthor({ name: `${interaction.client.config.botname} Moderation`, iconURL: `${interaction.client.config.boticon}` })
+                    .addFields({ name: 'Issued By', value: `${interaction.user}`, inline: true}, { name: 'Reason', value: reason, inline: true })
+                    .setColor(0xFF0000)
+                    .setTimestamp();
+                channel.send({ embeds: [modembed] });
+            }
+        }).catch(err => console.log(err));
 
         const embed = new EmbedBuilder()
             .setDescription(`**${user}** has been unbanned.`)

@@ -12,7 +12,7 @@ const fs = require('node:fs');
 const config = require('./config.json');
 
 // Set up MySQL
-const mysql = require('mysql');
+const mysql = require('mysql2');
 const db = mysql.createConnection({
     host: config.mysql.host,
     user: config.mysql.user,
@@ -91,5 +91,7 @@ const rest = new REST({ version: '10' }).setToken(config.token);
 client.login(config.token);
 
 // Register the managers
+const WarnManager = require('./managers/warnmanager.js');
+const SettingsManager = require('./managers/settingsmanager.js');
 client.warnManager = new WarnManager(client);
 client.settingsManager = new SettingsManager(client);

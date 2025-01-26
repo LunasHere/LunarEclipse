@@ -22,16 +22,18 @@ module.exports = {
             console.error(err);
             return interaction.reply({ content: 'An error occurred while adding the warn', ephemeral: true });
         });
-        const channel = interaction.client.settingsManager.getSettings(interaction.guild).modlogchannel;
-        if (channel) {
-            const modembed = new EmbedBuilder()
-                .setDescription(`**${user.username}#${user.discriminator}** has been warned by **${interaction.user}** for **${reason}**`)
-                .addFields({ name: 'Warnings', value: `${warns + 1}`, inline: true }, { name: 'Case ID', value: `${caseid}`, inline: true })
-                .setAuthor({ name: `${interaction.client.config.botname} Moderation`, iconURL: `${interaction.client.config.boticon}` })
-                .setColor(0xFF0000)
-                .setTimestamp();
-            channel.send({ embeds: [modembed] });
-        }
+        await interaction.client.settingsManager.getSettings(interaction.guild).then(settings => {
+            if(settings.modlogchannel) {
+                const channel = interaction.guild.channels.cache.get(settings.modlogchannel);
+                const modembed = new EmbedBuilder()
+                    .setDescription(`**${user.username}#${user.discriminator}** (User ID: ${user.id}) has been warned.`)
+                    .setAuthor({ name: `${interaction.client.config.botname} Moderation`, iconURL: `${interaction.client.config.boticon}` })
+                    .addFields({ name: 'Issued By', value: `${interaction.user}`, inline: true}, { name: 'Reason', value: reason, inline: true }, { name: 'Warnings', value: `${warns + 1}`, inline: true }, { name: 'Case ID', value: `${caseid}`, inline: true })
+                    .setColor(0xFF0000)
+                    .setTimestamp();
+                channel.send({ embeds: [modembed] });
+            }
+        }).catch(err => console.log(err));
 
         const userembed = new EmbedBuilder()
             .setDescription(`You have been warned in **${interaction.guild.name}**.  Please be sure to read the rules and follow them.  If you continue to break the rules, you will be kicked or banned.`)

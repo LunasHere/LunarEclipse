@@ -15,7 +15,7 @@ module.exports = {
                 .setDescription(`No warn found with Case ID ${caseid}.`)
                 .setColor(0xFF0000)
                 .setTimestamp();
-            return interaction.reply({ embeds: [nowarn] });
+            return interaction.reply({ embeds: [nowarn], ephemeral: true });
         }
         await interaction.client.warnManager.removeWarn(caseid);
         const embed = new EmbedBuilder()
@@ -23,17 +23,19 @@ module.exports = {
             .setDescription(`Warn with Case ID ${caseid} has been removed.`)
             .setColor(0xFF0000)
             .setTimestamp();
-        interaction.reply({ embeds: [embed] });
+        interaction.reply({ embeds: [embed], ephemeral: true });
 
-        const channel = interaction.client.settingsManager.getGuildSettings(interaction.guild).modlogchannel;
-        if (channel) {
-            const modembed = new EmbedBuilder()
-                .setDescription(`**${warn.user}**'s warn with Case ID ${caseid} has been removed by **${interaction.user}**.`)
-                .setAuthor({ name: `${interaction.client.config.botname} Moderation`, iconURL: `${interaction.client.config.boticon}` })
-                .setColor(0xFF0000)
-                .setTimestamp();
-            channel.send({ embeds: [modembed] });
-        }
+        await interaction.client.settingsManager.getSettings(interaction.guild).then(settings => {
+            if(settings.modlogchannel) {
+                const channel = interaction.guild.channels.cache.get(settings.modlogchannel);
+                const modembed = new EmbedBuilder()
+                    .setDescription(`**<@${warn.user}>**'s warn with Case ID ${caseid} has been removed by **${interaction.user}**.`)
+                    .setAuthor({ name: `${interaction.client.config.botname} Moderation`, iconURL: `${interaction.client.config.boticon}` })
+                    .setColor(0xFF0000)
+                    .setTimestamp();
+                channel.send({ embeds: [modembed] });
+            }
+        }).catch(err => console.log(err));
 
     }
 }
