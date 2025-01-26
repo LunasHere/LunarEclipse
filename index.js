@@ -10,6 +10,7 @@ const client = new Client({ intents: [
 
 const fs = require('node:fs');
 const config = require('./config.json');
+const { Player } = require('discord-player');
 
 // Set up MySQL
 const mysql = require('mysql2');
@@ -103,18 +104,21 @@ async function updateAllGuilds() {
         await client.settingsManager.getSettings(guild).then(settings => {
             if(settings.memberstatschannel) {
                 const memberstatschannel = guild.channels.cache.get(settings.memberstatschannel);
+                if(memberstatschannel.guild.id !== guild.id) return;
                 if(memberstatschannel) {
                     memberstatschannel.setName(`All Members: ${guild.members.cache.size}`);
                 }
             }
             if(settings.userstatschannel) {
                 const userstatschannel = guild.channels.cache.get(settings.userstatschannel);
+                if(userstatschannel.guild.id !== guild.id) return;
                 if(userstatschannel) {
                     userstatschannel.setName(`Users: ${guild.members.cache.filter(member => !member.user.bot).size}`);
                 }
             }
             if(settings.botstatschannel) {
                 const botstatschannel = guild.channels.cache.get(settings.botstatschannel);
+                if(botstatschannel.guild.id !== guild.id) return;
                 if(botstatschannel) {
                     botstatschannel.setName(`Bots: ${guild.members.cache.filter(member => member.user.bot).size}`);
                 }
@@ -135,3 +139,14 @@ function delay(ms) {
 client.on('ready', () => {
     updateAllGuilds();
 });
+
+// Set up player
+client.player = new Player(client, {
+    ytdlOptions: {
+        quality: "highestaudio",
+        highWaterMark: 1 << 25,
+    },
+});
+const { registerPlayerEvents } = require('./playerevents.js');
+// Register the player events
+registerPlayerEvents(client);
