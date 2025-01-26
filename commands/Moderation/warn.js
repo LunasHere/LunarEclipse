@@ -22,7 +22,7 @@ module.exports = {
             console.error(err);
             return interaction.reply({ content: 'An error occurred while adding the warn', ephemeral: true });
         });
-        const channel = interaction.client.settingsManager.getGuildSettings(interaction.guild).modlogchannel;
+        const channel = interaction.client.settingsManager.getSettings(interaction.guild).modlogchannel;
         if (channel) {
             const modembed = new EmbedBuilder()
                 .setDescription(`**${user.username}#${user.discriminator}** has been warned by **${interaction.user}** for **${reason}**`)

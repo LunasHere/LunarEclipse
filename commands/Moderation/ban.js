@@ -20,7 +20,7 @@ module.exports = {
             return interaction.reply({ content: 'You cannot ban a user with the same or higher role than yourself', ephemeral: true });
         }
         
-        const channel = interaction.client.settingsManager.getGuildSettings(interaction.guild).modlogchannel;
+        const channel = interaction.client.settingsManager.getSettings(interaction.guild).modlogchannel;
         if (channel) {
             const modembed = new EmbedBuilder()
                 .setDescription(`**${user.username}#${user.discriminator}** (ID: ${user.id}) has been banned by **${interaction.user}** for **${reason}**`)
