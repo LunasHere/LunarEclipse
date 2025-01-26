@@ -95,3 +95,43 @@ const WarnManager = require('./managers/warnmanager.js');
 const SettingsManager = require('./managers/settingsmanager.js');
 client.warnManager = new WarnManager(client);
 client.settingsManager = new SettingsManager(client);
+
+// Update all guild stats
+async function updateAllGuilds() {
+    client.guilds.cache.forEach(async guild => {
+        await guild.members.fetch(); // Fetch all members to populate the cache
+        await client.settingsManager.getSettings(guild).then(settings => {
+            if(settings.memberstatschannel) {
+                const memberstatschannel = guild.channels.cache.get(settings.memberstatschannel);
+                if(memberstatschannel) {
+                    memberstatschannel.setName(`All Members: ${guild.memberCount}`);
+                }
+            }
+            if(settings.userstatschannel) {
+                const userstatschannel = guild.channels.cache.get(settings.userstatschannel);
+                if(userstatschannel) {
+                    userstatschannel.setName(`Users: ${guild.members.cache.filter(member => !member.user.bot).size}`);
+                }
+            }
+            if(settings.botstatschannel) {
+                const botstatschannel = guild.channels.cache.get(settings.botstatschannel);
+                if(botstatschannel) {
+                    botstatschannel.setName(`Bots: ${guild.members.cache.filter(member => member.user.bot).size}`);
+                }
+            }
+        }).catch(err => console.log(err));
+        await delay(1000);
+    });
+  
+    console.log('All guild stats updated');
+    // Schedule the next run after 5 minutes
+    setTimeout(() => updateAllGuilds(), 5 * 60 * 1000);
+}
+
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+client.on('ready', () => {
+    updateAllGuilds();
+});
