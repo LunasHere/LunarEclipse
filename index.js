@@ -104,7 +104,7 @@ async function updateAllGuilds() {
             if(settings.memberstatschannel) {
                 const memberstatschannel = guild.channels.cache.get(settings.memberstatschannel);
                 if(memberstatschannel) {
-                    memberstatschannel.setName(`All Members: ${guild.memberCount}`);
+                    memberstatschannel.setName(`All Members: ${guild.members.cache.size}`);
                 }
             }
             if(settings.userstatschannel) {
