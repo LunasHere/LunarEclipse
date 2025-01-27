@@ -17,8 +17,12 @@
   },
   "homepage": "https://github.com/LunasHere/DiscordBot#readme",
   "dependencies": {
+    "@discordjs/opus": "^0.10.0",
+    "@discordjs/voice": "^0.18.0",
     "discord.js": "^14.17.3",
+    "ffmpeg-static": "^5.2.0",
     "mysql2": "^3.12.0",
-    "node-fetch": "^2.7.0"
+    "node-fetch": "^2.7.0",
+    "sodium-native": "^4.3.1"
   }
 }

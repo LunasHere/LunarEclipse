@@ -10,7 +10,6 @@ const client = new Client({ intents: [
 
 const fs = require('node:fs');
 const config = require('./config.json');
-const { Player } = require('discord-player');
 
 // Set up MySQL
 const mysql = require('mysql2');
@@ -139,14 +138,3 @@ function delay(ms) {
 client.on('ready', () => {
     updateAllGuilds();
 });
-
-// Set up player
-client.player = new Player(client, {
-    ytdlOptions: {
-        quality: "highestaudio",
-        highWaterMark: 1 << 25,
-    },
-});
-const { registerPlayerEvents } = require('./playerevents.js');
-// Register the player events
-registerPlayerEvents(client);
