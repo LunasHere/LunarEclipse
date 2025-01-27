@@ -21,7 +21,7 @@ module.exports = {
         const embed = new EmbedBuilder()
             .setTitle(`${interaction.client.config.botname} Fun`)
             .setDescription(`${interaction.user} bit ${user}!`)
-            .setColor(0x00FF00)
+            .setColor(0xFF0000)
             .setImage(bite.url)
             .setTimestamp();
         await interaction.reply({ embeds: [embed] });
