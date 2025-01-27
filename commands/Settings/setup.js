@@ -81,6 +81,34 @@ module.exports = {
                     console.error(err);
                     return interaction.reply({ content: 'An error occurred while creating the channel', ephemeral: true });
                 });
+
+                // Create role for ticket staff
+                interaction.guild.roles.create({
+                    name: 'Ticket Staff'
+                }).then(role => {
+                    interaction.client.settingsManager.updateSetting(interaction.guild, 'staffrole', role.id).catch(err => {
+                        console.error(err);
+                        return interaction.reply({ content: 'An error occurred while updating the setting', ephemeral: true });
+                    });
+                }).catch(err => {
+                    console.error(err);
+                    return interaction.reply({ content: 'An error occurred while creating the role', ephemeral: true });
+                });
+
+                // Create category for tickets
+                interaction.guild.channels.create({
+                    name: 'Tickets',
+                    type: ChannelType.GuildCategory
+                }).then(category => {
+                    interaction.client.settingsManager.updateSetting(interaction.guild, 'ticketcategory', category.id).catch(err => {
+                        console.error(err);
+                        return interaction.reply({ content: 'An error occurred while updating the setting', ephemeral: true });
+                    });
+                }).catch(err => {
+                    console.error(err);
+                    return interaction.reply({ content: 'An error occurred while creating the category', ephemeral: true });
+                });
+
             }).catch(err => {
                 console.error(err);
                 return interaction.reply({ content: 'An error occurred while creating the category', ephemeral: true });

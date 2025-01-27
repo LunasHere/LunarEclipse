@@ -8,10 +8,16 @@ module.exports = {
     async execute(interaction) {
         await interaction.client.settingsManager.getSettings(interaction.guild).then(settings => {
             const embed = new EmbedBuilder()
-                .setAuthor({ name: `${interaction.client.config.botname} Configuration`, iconURL: `${interaction.client.config.boticon}` })
-                .setDescription(`**Modlog Channel:** ${settings.modlogchannel ? `<#${settings.modlogchannel}>` : 'Not set'}\n**Member Stats Channel:** ${settings.memberstatschannel ? `<#${settings.memberstatschannel}>` : 'Not set'}\n**User Stats Channel:** ${settings.userstatschannel ? `<#${settings.userstatschannel}>` : 'Not set'}\n**Bot Stats Channel:** ${settings.botstatschannel ? `<#${settings.botstatschannel}>` : 'Not set'}`)
+                .setAuthor({ name: `${interaction.client.config.botname} Settings`, iconURL: `${interaction.client.config.boticon}` })
                 .setColor(0xFF0000)
-                .setTimestamp();
+                .addFields([
+                    { name: 'Modlog Channel', value: settings.modlogchannel ? `<#${settings.modlogchannel}>` : 'Not set', inline: false },
+                    { name: 'Member Stats Channel', value: settings.memberstatschannel ? `<#${settings.memberstatschannel}>` : 'Not set', inline: false },
+                    { name: 'User Stats Channel', value: settings.userstatschannel ? `<#${settings.userstatschannel}>` : 'Not set', inline: false },
+                    { name: 'Bot Stats Channel', value: settings.botstatschannel ? `<#${settings.botstatschannel}>` : 'Not set', inline: false },
+                    { name: 'Ticket Category', value: settings.ticketcategory ? `${interaction.guild.channels.cache.get(settings.ticketcategory).name}` : 'Not set', inline: false },
+                    { name: 'Staff Role', value: settings.staffrole ? `<@&${settings.staffrole}>` : 'Not set', inline: false }
+                ]);
             interaction.reply({ embeds: [embed] });
         }).catch(err => {
             console.error(err);

@@ -93,8 +93,12 @@ client.login(config.token);
 // Register the managers
 const WarnManager = require('./managers/warnmanager.js');
 const SettingsManager = require('./managers/settingsmanager.js');
+const CooldownManager = require('./managers/cooldownmanager.js');
+const TicketManager = require('./managers/ticketmanager.js');
 client.warnManager = new WarnManager(client);
 client.settingsManager = new SettingsManager(client);
+client.cooldownManager = new CooldownManager(client);
+client.ticketManager = new TicketManager(client);
 
 // Update all guild stats
 async function updateAllGuilds() {
