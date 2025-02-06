@@ -1,5 +1,4 @@
 const { ChannelType, MessageFlags, EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits, PermissionsBitField } = require('discord.js');
-const { name } = require('../../events/guildJoin');
 
 module.exports = {
     data: new SlashCommandBuilder()
