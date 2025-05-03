@@ -5,6 +5,6 @@ module.exports = {
     once: false,
     async execute(guild, client) {
         client.settingsManager.deleteSettings(guild);
-        console.log(`Left guild ${guild.name} (${guild.id})`);
+        client.log(`Left guild ${guild.name} (${guild.id})`);
     }
 }

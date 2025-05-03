@@ -33,7 +33,7 @@ module.exports = {
                     .setTimestamp();
                 channel.send({ embeds: [modembed] });
             }
-        }).catch(err => console.log(err));
+        }).catch(err => console.error(err));
 
         const userembed = new EmbedBuilder()
             .setDescription(`You have been warned in **${interaction.guild.name}**.  Please be sure to read the rules and follow them.  If you continue to break the rules, you will be kicked or banned.`)
@@ -41,7 +41,7 @@ module.exports = {
             .addFields({ name: 'Reason', value: reason, inline: true }, { name: 'Warnings', value: `${warns + 1}`, inline: true }, { name: 'Case ID', value: `${caseid}`, inline: true })
             .setColor(0xFF0000)
             .setTimestamp();
-        user.send({ embeds: [userembed] }).catch(err => console.log(err));
+        user.send({ embeds: [userembed] }).catch(err => console.error(err));
 
         const embed = new EmbedBuilder()
             .setDescription(`**${user}** has been warned.`)

@@ -5,8 +5,7 @@ module.exports = {
         .setName('warnhistory')
         .setDescription('Shows a user\'s warn history')
         .addUserOption(option => option.setName('user').setDescription('The user to show the warn history of').setRequired(true))
-        .setDefaultMemberPermissions(PermissionFlagsBits.BanMembers | PermissionFlagsBits.KickMembers)
-        .setDMPermission(false),
+        .setDefaultMemberPermissions(PermissionFlagsBits.BanMembers | PermissionFlagsBits.KickMembers),
     async execute(interaction) {
         const user = interaction.options.getUser('user');
         const warns = await interaction.client.warnManager.getWarnsForUser(interaction.guild.id, user);

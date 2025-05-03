@@ -122,6 +122,6 @@ module.exports = {
                 console.error(err);
                 return interaction.reply({ content: 'An error occurred while updating the setting', flags: MessageFlags.Ephemeral });
             });
-        }).catch(err => console.log(err));
+        }).catch(err => console.error(err));
     }
 }

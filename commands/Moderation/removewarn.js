@@ -35,7 +35,7 @@ module.exports = {
                     .setTimestamp();
                 channel.send({ embeds: [modembed] });
             }
-        }).catch(err => console.log(err));
+        }).catch(err => console.error(err));
 
     }
 }

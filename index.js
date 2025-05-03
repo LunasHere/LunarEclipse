@@ -12,6 +12,10 @@ const client = new Client({ intents: [
 const fs = require('node:fs');
 const config = require('./config.json');
 
+client.log = (message) => {
+    console.log(`[${new Date().toLocaleTimeString()}] ${message}`);
+};
+
 // Set up MySQL
 const mysql = require('mysql2');
 const db = mysql.createConnection({
@@ -22,7 +26,7 @@ const db = mysql.createConnection({
 });
 db.connect((err) => {
     if (err) throw err;
-    console.log('Connected to MySQL');
+    client.log('Connected to MySQL');
 });
 
 // Exports for Config and DB
@@ -49,7 +53,7 @@ for (const folder of commandFolders) {
 	    	client.commands.set(command.data.name, command);
 	    } else {
             // Log the error
-	    	console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+	    	client.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
 	    }
     }
 }
@@ -73,7 +77,7 @@ const rest = new REST({ version: '10' }).setToken(config.token);
 // Register the commands
 (async () => {
 	try {
-		console.log(`Started refreshing ${commands.length} application (/) commands.`);
+		client.log(`Started refreshing ${commands.length} application (/) commands.`);
 
         // Send the commands to the Discord API
 		const data = await rest.put(
@@ -81,7 +85,7 @@ const rest = new REST({ version: '10' }).setToken(config.token);
 			{ body: commands },
 		);
         
-		console.log(`Successfully reloaded ${data.length} application (/) commands.`);
+		client.log(`Successfully reloaded ${data.length} application (/) commands.`);
 	} catch (error) {
         // Log the error
 		console.error(error);
@@ -139,7 +143,7 @@ async function updateAllGuilds() {
         await delay(1000); // Delay to avoid rate limits
     }
 
-    console.log('All guild stats updated');
+    client.log('All guild stats updated');
     setTimeout(updateAllGuilds, 5 * 60 * 1000); // Schedule the next run
 }
 

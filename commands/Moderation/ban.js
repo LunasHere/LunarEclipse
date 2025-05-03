@@ -34,7 +34,7 @@ module.exports = {
                     .setTimestamp();
                 channel.send({ embeds: [modembed] });
             }
-        }).catch(err => console.log(err));
+        }).catch(err => interaction.client.log(err));
 
         const userembed = new EmbedBuilder()
             .setDescription(`You have been banned from **${interaction.guild.name}**.  If you feel this ban was unjust, please contact the server owner.`)
@@ -42,7 +42,7 @@ module.exports = {
             .addFields({ name: 'Reason', value: reason, inline: true })
             .setColor(0xFF0000)
             .setTimestamp();
-        user.send({ embeds: [userembed] }).catch(err => console.log(err));
+        user.send({ embeds: [userembed] }).catch(err => interaction.client.log(err));
 
         interaction.guild.members.ban(user, { reason: reason }).then(() => {
             const embed = new EmbedBuilder()

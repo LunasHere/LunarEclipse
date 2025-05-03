@@ -35,7 +35,7 @@ module.exports = {
                 const reason = auditLog.reason || "No reason provided";
                 return {
                     settingKey: 'logMemberBanAdd', // Specific setting for MemberBanAdd
-                    description: `**${target}** (ID: ${target.id}) has been banned.`,
+                    description: `${target} (ID: ${target.id}) has been banned.`,
                     fields: [
                         { name: 'Issued By', value: `${executor}`, inline: false },
                         { name: 'Reason', value: reason, inline: false }
@@ -48,7 +48,7 @@ module.exports = {
                 const executor = auditLog.executor;
                 return {
                     settingKey: 'logMemberBanRemove', // Specific setting for MemberBanRemove
-                    description: `**${target}** (ID: ${target.id}) has been unbanned.`,
+                    description: `${target} (ID: ${target.id}) has been unbanned.`,
                     fields: [
                         { name: 'Unbanned By', value: `${executor}`, inline: false }
                     ],
@@ -61,7 +61,7 @@ module.exports = {
                 const reason = auditLog.reason || "No reason provided";
                 return {
                     settingKey: 'logMemberKick', // Specific setting for MemberKick
-                    description: `**${target}** (ID: ${target.id}) has been kicked.`,
+                    description: `${target} (ID: ${target.id}) has been kicked.`,
                     fields: [
                         { name: 'Issued By', value: `${executor}`, inline: false },
                         { name: 'Reason', value: reason, inline: false }
@@ -76,7 +76,7 @@ module.exports = {
                 const removedRoles = auditLog.changes.find(change => change.key === '$remove')?.new.map(role => `<@&${role.id}>`).join(', ') || 'None';
                 return {
                     settingKey: 'logMemberRoleUpdate', // Specific setting for MemberRoleUpdate
-                    description: `**${target}** (ID: ${target.id}) has had their roles updated.`,
+                    description: `${target} (ID: ${target.id}) has had their roles updated.`,
                     fields: [
                         { name: 'Updated By', value: `${executor}`, inline: false },
                         { name: 'Roles Added', value: addedRoles, inline: true },
@@ -104,7 +104,7 @@ module.exports = {
                     .addFields(...embedData.fields)
                     .setColor(embedData.color)
                     .setTimestamp();
-                modlogChannel.send({ embeds: [embed] }).catch(err => console.log(err));
+                modlogChannel.send({ embeds: [embed] }).catch(err => console.error(err));
             }
         }
     }

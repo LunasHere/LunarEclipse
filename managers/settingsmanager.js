@@ -26,7 +26,7 @@ class SettingsManager {
                 if (result.length === 0) {
                     // Create the guild if it doesn't exist
                     this.createSettings(guild).then(() => {
-                        console.log(`Created guild ${guild.name} (${guild.id}) in database`);
+                        client.log(`Created guild ${guild.name} (${guild.id}) in database`);
                         return resolve({});
                     }).catch(err => {
                         console.error(err);
