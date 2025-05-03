@@ -1,4 +1,4 @@
-const { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+const { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -10,14 +10,14 @@ module.exports = {
     async execute(interaction) {
         const user = interaction.options.getUser('user');
         // Check if the user is trying to ban themselves
-        if (user.id === interaction.user.id) return interaction.reply({ content: 'You cannot ban yourself', ephemeral: true });
+        if (user.id === interaction.user.id) return interaction.reply({ content: 'You cannot ban yourself', flags: MessageFlags.Ephemeral });
         // Check if the user is trying to ban a bot
-        if (user.bot) return interaction.reply({ content: 'You cannot ban a bot', ephemeral: true });
+        if (user.bot) return interaction.reply({ content: 'You cannot ban a bot', flags: MessageFlags.Ephemeral });
         const reason = interaction.options.getString('reason');
 
         // check if someone is trying to ban a user with the same or higher role of themselves and is not the owner
         if (interaction.guild.members.cache.get(user.id).roles.highest.position >= interaction.member.roles.highest.position && interaction.guild.ownerId !== interaction.user.id) {
-            return interaction.reply({ content: 'You cannot ban a user with the same or higher role than yourself', ephemeral: true });
+            return interaction.reply({ content: 'You cannot ban a user with the same or higher role than yourself', flags: MessageFlags.Ephemeral });
         }
         
         await interaction.client.settingsManager.getSettings(interaction.guild).then(settings => {
@@ -51,7 +51,7 @@ module.exports = {
             interaction.reply({ embeds: [embed] });
         }).catch(err => {
             console.error(err);
-            return interaction.reply({ content: 'An error occurred while banning the user', ephemeral: true });
+            return interaction.reply({ content: 'An error occurred while banning the user', flags: MessageFlags.Ephemeral });
         });
     }
 }

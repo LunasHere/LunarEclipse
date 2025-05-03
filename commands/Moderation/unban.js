@@ -1,4 +1,4 @@
-const { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+const { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -12,7 +12,7 @@ module.exports = {
         const reason = interaction.options.getString('reason');
         const bans = await interaction.guild.bans.fetch();
         const ban = bans.find(ban => ban.user.id === user.id);
-        if (!ban) return interaction.reply({ content: 'User is not banned', ephemeral: true });
+        if (!ban) return interaction.reply({ content: 'User is not banned', flags: MessageFlags.Ephemeral });
         await interaction.guild.bans.remove(user, { reason: reason });
         await interaction.client.settingsManager.getSettings(interaction.guild).then(settings => {
             if(settings.modlogchannel) {
@@ -27,6 +27,6 @@ module.exports = {
             }
         }).catch(err => console.log(err));
 
-        interaction.reply({ content: `**${user}** has been unbanned`, ephemeral: true });
+        interaction.reply({ content: `**${user}** has been unbanned`, flags: MessageFlags.Ephemeral });
     }
 }

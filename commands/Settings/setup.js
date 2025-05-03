@@ -1,4 +1,4 @@
-const { ChannelType, MessageFlags, EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits, PermissionsBitField } = require('discord.js');
+const { ChannelType, MessageFlags, EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits, PermissionsBitField, MessageFlags } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -8,7 +8,7 @@ module.exports = {
     async execute(interaction) {
         await interaction.client.settingsManager.getSettings(interaction.guild).then(settings => {
             if(settings.hasbeensetup) {
-                return interaction.reply({ content: 'This server has already been set up', ephemeral: true });
+                return interaction.reply({ content: 'This server has already been set up', flags: MessageFlags.Ephemeral });
             }
 
             // Create channel for mod logs, set perms to exclude everyone, and set it in the settings
@@ -28,11 +28,11 @@ module.exports = {
             }).then(channel => {
                 interaction.client.settingsManager.updateSetting(interaction.guild, 'modlogchannel', channel.id).catch(err => {
                     console.error(err);
-                    return interaction.reply({ content: 'An error occurred while updating the setting', ephemeral: true });
+                    return interaction.reply({ content: 'An error occurred while updating the setting', flags: MessageFlags.Ephemeral });
                 });
             }).catch(err => {
                 console.error(err);
-                return interaction.reply({ content: 'An error occurred while creating the channel', ephemeral: true });
+                return interaction.reply({ content: 'An error occurred while creating the channel', flags: MessageFlags.Ephemeral });
             });
 
             // Create a category for the stats channels
@@ -48,11 +48,11 @@ module.exports = {
                 }).then(channel => {
                     interaction.client.settingsManager.updateSetting(interaction.guild, 'memberstatschannel', channel.id).catch(err => {
                         console.error(err);
-                        return interaction.reply({ content: 'An error occurred while updating the setting', ephemeral: true });
+                        return interaction.reply({ content: 'An error occurred while updating the setting', flags: MessageFlags.Ephemeral });
                     });
                 }).catch(err => {
                     console.error(err);
-                    return interaction.reply({ content: 'An error occurred while creating the channel', ephemeral: true });
+                    return interaction.reply({ content: 'An error occurred while creating the channel', flags: MessageFlags.Ephemeral });
                 });
 
                 // Create channel for user stats, set perms to exclude everyone, and set it in the settings
@@ -63,11 +63,11 @@ module.exports = {
                 }).then(channel => {
                     interaction.client.settingsManager.updateSetting(interaction.guild, 'userstatschannel', channel.id).catch(err => {
                         console.error(err);
-                        return interaction.reply({ content: 'An error occurred while updating the setting', ephemeral: true });
+                        return interaction.reply({ content: 'An error occurred while updating the setting', flags: MessageFlags.Ephemeral });
                     });
                 }).catch(err => {
                     console.error(err);
-                    return interaction.reply({ content: 'An error occurred while creating the channel', ephemeral: true });
+                    return interaction.reply({ content: 'An error occurred while creating the channel', flags: MessageFlags.Ephemeral });
                 });
 
                 // Create channel for bot stats, set perms to exclude everyone, and set it in the settings
@@ -78,11 +78,11 @@ module.exports = {
                 }).then(channel => {
                     interaction.client.settingsManager.updateSetting(interaction.guild, 'botstatschannel', channel.id).catch(err => {
                         console.error(err);
-                        return interaction.reply({ content: 'An error occurred while updating the setting', ephemeral: true });
+                        return interaction.reply({ content: 'An error occurred while updating the setting', flags: MessageFlags.Ephemeral });
                     });
                 }).catch(err => {
                     console.error(err);
-                    return interaction.reply({ content: 'An error occurred while creating the channel', ephemeral: true });
+                    return interaction.reply({ content: 'An error occurred while creating the channel', flags: MessageFlags.Ephemeral });
                 });
 
                 // Create role for ticket staff
@@ -91,11 +91,11 @@ module.exports = {
                 }).then(role => {
                     interaction.client.settingsManager.updateSetting(interaction.guild, 'staffrole', role.id).catch(err => {
                         console.error(err);
-                        return interaction.reply({ content: 'An error occurred while updating the setting', ephemeral: true });
+                        return interaction.reply({ content: 'An error occurred while updating the setting', flags: MessageFlags.Ephemeral });
                     });
                 }).catch(err => {
                     console.error(err);
-                    return interaction.reply({ content: 'An error occurred while creating the role', ephemeral: true });
+                    return interaction.reply({ content: 'An error occurred while creating the role', flags: MessageFlags.Ephemeral });
                 });
 
                 // Create category for tickets
@@ -105,22 +105,22 @@ module.exports = {
                 }).then(category => {
                     interaction.client.settingsManager.updateSetting(interaction.guild, 'ticketcategory', category.id).catch(err => {
                         console.error(err);
-                        return interaction.reply({ content: 'An error occurred while updating the setting', ephemeral: true });
+                        return interaction.reply({ content: 'An error occurred while updating the setting', flags: MessageFlags.Ephemeral });
                     });
                 }).catch(err => {
                     console.error(err);
-                    return interaction.reply({ content: 'An error occurred while creating the category', ephemeral: true });
+                    return interaction.reply({ content: 'An error occurred while creating the category', flags: MessageFlags.Ephemeral });
                 });
 
             }).catch(err => {
                 console.error(err);
-                return interaction.reply({ content: 'An error occurred while creating the category', ephemeral: true });
+                return interaction.reply({ content: 'An error occurred while creating the category', flags: MessageFlags.Ephemeral });
             });
             interaction.client.settingsManager.updateSetting(interaction.guild, 'hasbeensetup', true).then(() => {
-                interaction.reply({ content: 'The server has been set up', ephemeral: true });
+                interaction.reply({ content: 'The server has been set up', flags: MessageFlags.Ephemeral });
             }).catch(err => {
                 console.error(err);
-                return interaction.reply({ content: 'An error occurred while updating the setting', ephemeral: true });
+                return interaction.reply({ content: 'An error occurred while updating the setting', flags: MessageFlags.Ephemeral });
             });
         }).catch(err => console.log(err));
     }

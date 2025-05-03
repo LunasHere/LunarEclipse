@@ -1,4 +1,4 @@
-const { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+const { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -21,7 +21,7 @@ module.exports = {
             interaction.reply({ embeds: [embed] });
         }).catch(err => {
             console.error(err);
-            return interaction.reply({ content: 'An error occurred while getting the settings', ephemeral: true });
+            return interaction.reply({ content: 'An error occurred while getting the settings', flags: MessageFlags.Ephemeral });
         });
     }
 }

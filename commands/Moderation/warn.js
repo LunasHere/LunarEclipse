@@ -1,4 +1,4 @@
-const { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+const { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -10,9 +10,9 @@ module.exports = {
     async execute(interaction) {
         const user = interaction.options.getUser('user');
         // Check if the user is trying to warn themselves
-        if (user.id === interaction.user.id) return interaction.reply({ content: 'You cannot warn yourself', ephemeral: true });
+        if (user.id === interaction.user.id) return interaction.reply({ content: 'You cannot warn yourself', flags: MessageFlags.Ephemeral });
         // Check if the user is trying to warn a bot
-        if (user.bot) return interaction.reply({ content: 'You cannot warn a bot', ephemeral: true });
+        if (user.bot) return interaction.reply({ content: 'You cannot warn a bot', flags: MessageFlags.Ephemeral });
         const reason = interaction.options.getString('reason');
         const warns = await interaction.client.warnManager.getNumOfWarns(interaction.guild.id, user);
         let caseid;
@@ -20,7 +20,7 @@ module.exports = {
             caseid = id;
         }).catch(err => {
             console.error(err);
-            return interaction.reply({ content: 'An error occurred while adding the warn', ephemeral: true });
+            return interaction.reply({ content: 'An error occurred while adding the warn', flags: MessageFlags.Ephemeral });
         });
         await interaction.client.settingsManager.getSettings(interaction.guild).then(settings => {
             if(settings.modlogchannel) {
@@ -51,6 +51,6 @@ module.exports = {
             .setTimestamp();
         interaction.channel.send({ embeds: [embed] });
 
-        interaction.reply({ content: `**${user}** has been warned`, ephemeral: true });
+        interaction.reply({ content: `**${user}** has been warned`, flags: MessageFlags.Ephemeral });
     }
 }

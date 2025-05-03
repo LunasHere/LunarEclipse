@@ -1,4 +1,4 @@
-const { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits, ChannelType } = require('discord.js');
+const { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits, ChannelType, MessageFlags } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -21,30 +21,30 @@ module.exports = {
         switch(setting) {
             case 'modlogchannel':
                 if (!interaction.guild.channels.cache.get(value)) {
-                    return interaction.reply({ content: 'That channel does not exist', ephemeral: true });
+                    return interaction.reply({ content: 'That channel does not exist', flags: MessageFlags.Ephemeral });
                 }
                 // check that the channel is in this guild
                 if (interaction.guild.channels.cache.get(value).guild.id !== interaction.guild.id) {
-                    return interaction.reply({ content: 'That channel is not in this guild', ephemeral: true });
+                    return interaction.reply({ content: 'That channel is not in this guild', flags: MessageFlags.Ephemeral });
                 }
                 // check that the channel is a text channel
                 if (interaction.guild.channels.cache.get(value).type !== ChannelType.GuildText) {
-                    return interaction.reply({ content: 'That channel is not a text channel', ephemeral: true });
+                    return interaction.reply({ content: 'That channel is not a text channel', flags: MessageFlags.Ephemeral });
                 }
                 break;
             case 'memberstatschannel':
             case 'userstatschannel':
             case 'botstatschannel':
                 if (!interaction.guild.channels.cache.get(value)) {
-                    return interaction.reply({ content: 'That channel does not exist', ephemeral: true });
+                    return interaction.reply({ content: 'That channel does not exist', flags: MessageFlags.Ephemeral });
                 }
                 // check that the channel is in this guild
                 if (interaction.guild.channels.cache.get(value).guild.id !== interaction.guild.id) {
-                    return interaction.reply({ content: 'That channel is not in this guild', ephemeral: true });
+                    return interaction.reply({ content: 'That channel is not in this guild', flags: MessageFlags.Ephemeral });
                 }
                 // check that the channel is a voice channel
                 if (interaction.guild.channels.cache.get(value).type !== ChannelType.GuildVoice) {
-                    return interaction.reply({ content: 'That channel is not a voice channel', ephemeral: true });
+                    return interaction.reply({ content: 'That channel is not a voice channel', flags: MessageFlags.Ephemeral });
                 }
                 if(setting === 'memberstatschannel') {
                     interaction.guild.channels.cache.get(value).setName(`All Members: ${interaction.guild.memberCount}`);
@@ -59,33 +59,33 @@ module.exports = {
             case 'ticketcategory':
                 // check that the category exists
                 if (!interaction.guild.channels.cache.get(value)) {
-                    return interaction.reply({ content: 'That category does not exist', ephemeral: true });
+                    return interaction.reply({ content: 'That category does not exist', flags: MessageFlags.Ephemeral });
                 }
                 // check that the category is in this guild
                 if (interaction.guild.channels.cache.get(value).guild.id !== interaction.guild.id) {
-                    return interaction.reply({ content: 'That category is not in this guild', ephemeral: true });
+                    return interaction.reply({ content: 'That category is not in this guild', flags: MessageFlags.Ephemeral });
                 }
                 // check that the category is a category
                 if (interaction.guild.channels.cache.get(value).type !== ChannelType.GuildCategory) {
-                    return interaction.reply({ content: 'That channel is not a category', ephemeral: true });
+                    return interaction.reply({ content: 'That channel is not a category', flags: MessageFlags.Ephemeral });
                 }
                 break;
             case 'staffrole':
                 // check that the role exists
                 if (!interaction.guild.roles.cache.get(value)) {
-                    return interaction.reply({ content: 'That role does not exist', ephemeral: true });
+                    return interaction.reply({ content: 'That role does not exist', flags: MessageFlags.Ephemeral });
                 }
                 // check that the role is in this guild
                 if (interaction.guild.roles.cache.get(value).guild.id !== interaction.guild.id) {
-                    return interaction.reply({ content: 'That role is not in this guild', ephemeral: true });
+                    return interaction.reply({ content: 'That role is not in this guild', flags: MessageFlags.Ephemeral });
                 }
                 break;
         }
 
         await interaction.client.settingsManager.updateSetting(interaction.guild, setting, value).catch(err => {
             console.error(err);
-            return interaction.reply({ content: 'An error occurred while updating the setting', ephemeral: true });
+            return interaction.reply({ content: 'An error occurred while updating the setting', flags: MessageFlags.Ephemeral });
         });
-        interaction.reply({ content: `Setting \`${setting}\` has been set to \`${value}\``, ephemeral: true });
+        interaction.reply({ content: `Setting \`${setting}\` has been set to \`${value}\``, flags: MessageFlags.Ephemeral });
     }
 }

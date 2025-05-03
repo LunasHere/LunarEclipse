@@ -1,4 +1,4 @@
-const { EmbedBuilder, ActionRowBuilder, SlashCommandBuilder, PermissionFlagsBits, ButtonBuilder } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, SlashCommandBuilder, PermissionFlagsBits, ButtonBuilder, MessageFlags } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -19,6 +19,6 @@ module.exports = {
                     .setCustomId('lunarCreateTicket'),
             ]);
         interaction.channel.send({ embeds: [embed], components: [row] });
-        interaction.reply({ content: 'Ticket embed sent!', ephemeral: true });
+        interaction.reply({ content: 'Ticket embed sent!', flags: MessageFlags.Ephemeral });
     }
 }

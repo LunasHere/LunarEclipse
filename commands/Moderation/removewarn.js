@@ -1,4 +1,4 @@
-const { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+const { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -15,7 +15,7 @@ module.exports = {
                 .setDescription(`No warn found with Case ID ${caseid}.`)
                 .setColor(0xFF0000)
                 .setTimestamp();
-            return interaction.reply({ embeds: [nowarn], ephemeral: true });
+            return interaction.reply({ embeds: [nowarn], flags: MessageFlags.Ephemeral });
         }
         await interaction.client.warnManager.removeWarn(interaction.guild.id, caseid);
         const embed = new EmbedBuilder()
@@ -23,7 +23,7 @@ module.exports = {
             .setDescription(`Warn with Case ID ${caseid} has been removed.`)
             .setColor(0xFF0000)
             .setTimestamp();
-        interaction.reply({ embeds: [embed], ephemeral: true });
+        interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
 
         await interaction.client.settingsManager.getSettings(interaction.guild).then(settings => {
             if(settings.modlogchannel) {
