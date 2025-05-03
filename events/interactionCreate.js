@@ -1,4 +1,4 @@
-const { Events, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ComponentType } = require('discord.js');
+const { Events, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ComponentType, MessageFlags } = require('discord.js');
 
 module.exports = {
     name: Events.InteractionCreate,
@@ -29,7 +29,7 @@ async function handleCommand(interaction) {
         await command.execute(interaction);
     } catch (error) {
         console.error(error);
-        await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+        await interaction.reply({ content: 'There was an error while executing this command!', flags: MessageFlags.Ephemeral });
     }
 }
 
@@ -37,12 +37,12 @@ async function handleButton(interaction) {
     if (interaction.customId === 'lunarCreateTicket') {
         const settings = await interaction.client.settingsManager.getSettings(interaction.guild);
         if (!settings.ticketcategory || !settings.staffrole) {
-            return interaction.reply({ content: 'The staff of this server have not set up the ticket system.', ephemeral: true });
+            return interaction.reply({ content: 'The staff of this server have not set up the ticket system.', flags: MessageFlags.Ephemeral });
         }
 
         const cooldown = await interaction.client.cooldownManager.getCooldown('ticket', interaction.user);
         if (cooldown > Date.now()) {
-            return interaction.reply({ content: 'Please do not spam tickets!', ephemeral: true });
+            return interaction.reply({ content: 'Please do not spam tickets!', flags: MessageFlags.Ephemeral });
         }
 
         interaction.client.cooldownManager.addCooldown('ticket', interaction.user, 5 * 60 * 1000);
@@ -67,6 +67,6 @@ async function handleModal(interaction) {
     if (interaction.customId === 'ticketDescription') {
         const description = interaction.fields.getField('description', ComponentType.TextInput);
         const ticket = await interaction.client.ticketManager.createTicket(interaction.guild, interaction.user, description.value);
-        await interaction.reply({ content: `Ticket created! [Click Here](${ticket.url})`, ephemeral: true });
+        await interaction.reply({ content: `Ticket created! [Click Here](${ticket.url})`, flags: MessageFlags.Ephemeral });
     }
 }
