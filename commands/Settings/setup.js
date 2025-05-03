@@ -19,6 +19,10 @@ module.exports = {
                     {
                         id: interaction.guild.id,
                         deny: [PermissionsBitField.Flags.ViewChannel]
+                    },
+                    {
+                        id: interaction.client.user.id,
+                        allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.EmbedLinks]
                     }
                 ]
             }).then(channel => {
