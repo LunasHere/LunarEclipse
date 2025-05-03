@@ -6,6 +6,7 @@ const client = new Client({ intents: [
 	GatewayIntentBits.GuildMembers,
     GatewayIntentBits.GuildVoiceStates,
     GatewayIntentBits.GuildMessageReactions,
+    GatewayIntentBits.GuildModeration,
 ] });
 
 const fs = require('node:fs');
