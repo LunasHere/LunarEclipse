@@ -23,7 +23,18 @@ class SettingsManager {
                     console.error(err);
                     return reject(err);
                 }
-                resolve(result[0] ? JSON.parse(result[0].settings) : {});
+                if (result.length === 0) {
+                    // Create the guild if it doesn't exist
+                    this.createSettings(guild).then(() => {
+                        console.log(`Created guild ${guild.name} (${guild.id}) in database`);
+                        return resolve({});
+                    }).catch(err => {
+                        console.error(err);
+                        return reject(err);
+                    });
+                }
+                const settings = JSON.parse(result[0].settings);
+                resolve(settings);
             });
         });
     }
