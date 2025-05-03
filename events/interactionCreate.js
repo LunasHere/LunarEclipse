@@ -2,6 +2,7 @@ const { Events, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle
 
 module.exports = {
     name: Events.InteractionCreate,
+    once: false,
     async execute(interaction) {
         // Check if the interaction is a command
         if (interaction.isCommand()) {
