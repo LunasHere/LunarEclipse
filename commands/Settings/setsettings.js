@@ -1,4 +1,4 @@
-const { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits, ChannelType, MessageFlags } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits, ChannelType, MessageFlags } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -10,7 +10,13 @@ module.exports = {
             { name: 'User Stats Channel', value: 'userstatschannel' },
             { name: 'Bot Stats Channel', value: 'botstatschannel' },
             { name: 'Ticket Category', value: 'ticketcategory' },
-            { name: 'Staff Role', value: 'staffrole' }
+            { name: 'Staff Role', value: 'staffrole' },
+            { name: 'Log Role Create', value: 'logRoleCreate' },
+            { name: 'Log Role Delete', value: 'logRoleDelete' },
+            { name: 'Log Member Ban Add', value: 'logMemberBanAdd' },
+            { name: 'Log Member Ban Remove', value: 'logMemberBanRemove' },
+            { name: 'Log Member Kick', value: 'logMemberKick' },
+            { name: 'Log Member Role Update', value: 'logMemberRoleUpdate' }
         ))
         .addStringOption(option => option.setName('value').setDescription('The value to set the setting to').setRequired(true))
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
@@ -18,68 +24,67 @@ module.exports = {
         const setting = interaction.options.getString('setting');
         const value = interaction.options.getString('value');
 
-        switch(setting) {
+        const logSettings = [
+            'logRoleCreate', 'logRoleDelete', 'logMemberBanAdd',
+            'logMemberBanRemove', 'logMemberKick', 'logMemberRoleUpdate'
+        ];
+
+        const validateChannel = (channelId, type) => {
+            const channel = interaction.guild.channels.cache.get(channelId);
+            if (!channel) return 'That channel does not exist';
+            if (channel.guild.id !== interaction.guild.id) return 'That channel is not in this guild';
+            if (channel.type !== type) return `That channel is not a ${type === ChannelType.GuildText ? 'text' : 'voice'} channel`;
+            return null;
+        };
+
+        const validateRole = (roleId) => {
+            const role = interaction.guild.roles.cache.get(roleId);
+            if (!role) return 'That role does not exist';
+            if (role.guild.id !== interaction.guild.id) return 'That role is not in this guild';
+            return null;
+        };
+
+        if (logSettings.includes(setting)) {
+            if (!['true', 'false'].includes(value.toLowerCase())) {
+                return interaction.reply({ content: 'Value must be either `true` or `false` for log settings', flags: MessageFlags.Ephemeral });
+            }
+            await interaction.client.settingsManager.updateSetting(interaction.guild, setting, value.toLowerCase() === 'true').catch(err => {
+                console.error(err);
+                return interaction.reply({ content: 'An error occurred while updating the setting', flags: MessageFlags.Ephemeral });
+            });
+            return interaction.reply({ content: `Setting \`${setting}\` has been set to \`${value}\``, flags: MessageFlags.Ephemeral });
+        }
+
+        let error = null;
+        switch (setting) {
             case 'modlogchannel':
-                if (!interaction.guild.channels.cache.get(value)) {
-                    return interaction.reply({ content: 'That channel does not exist', flags: MessageFlags.Ephemeral });
-                }
-                // check that the channel is in this guild
-                if (interaction.guild.channels.cache.get(value).guild.id !== interaction.guild.id) {
-                    return interaction.reply({ content: 'That channel is not in this guild', flags: MessageFlags.Ephemeral });
-                }
-                // check that the channel is a text channel
-                if (interaction.guild.channels.cache.get(value).type !== ChannelType.GuildText) {
-                    return interaction.reply({ content: 'That channel is not a text channel', flags: MessageFlags.Ephemeral });
-                }
+                error = validateChannel(value, ChannelType.GuildText);
                 break;
             case 'memberstatschannel':
             case 'userstatschannel':
             case 'botstatschannel':
-                if (!interaction.guild.channels.cache.get(value)) {
-                    return interaction.reply({ content: 'That channel does not exist', flags: MessageFlags.Ephemeral });
-                }
-                // check that the channel is in this guild
-                if (interaction.guild.channels.cache.get(value).guild.id !== interaction.guild.id) {
-                    return interaction.reply({ content: 'That channel is not in this guild', flags: MessageFlags.Ephemeral });
-                }
-                // check that the channel is a voice channel
-                if (interaction.guild.channels.cache.get(value).type !== ChannelType.GuildVoice) {
-                    return interaction.reply({ content: 'That channel is not a voice channel', flags: MessageFlags.Ephemeral });
-                }
-                if(setting === 'memberstatschannel') {
-                    interaction.guild.channels.cache.get(value).setName(`All Members: ${interaction.guild.memberCount}`);
-                }
-                else if(setting === 'userstatschannel') {
-                    interaction.guild.channels.cache.get(value).setName(`Users: ${interaction.guild.members.cache.filter(member => !member.user.bot).size}`);
-                }
-                else if(setting === 'botstatschannel') {
-                    interaction.guild.channels.cache.get(value).setName(`Bots: ${interaction.guild.members.cache.filter(member => member.user.bot).size}`);
+                error = validateChannel(value, ChannelType.GuildVoice);
+                if (!error) {
+                    const channel = interaction.guild.channels.cache.get(value);
+                    if (setting === 'memberstatschannel') {
+                        channel.setName(`All Members: ${interaction.guild.memberCount}`);
+                    } else if (setting === 'userstatschannel') {
+                        channel.setName(`Users: ${interaction.guild.members.cache.filter(member => !member.user.bot).size}`);
+                    } else if (setting === 'botstatschannel') {
+                        channel.setName(`Bots: ${interaction.guild.members.cache.filter(member => member.user.bot).size}`);
+                    }
                 }
                 break;
             case 'ticketcategory':
-                // check that the category exists
-                if (!interaction.guild.channels.cache.get(value)) {
-                    return interaction.reply({ content: 'That category does not exist', flags: MessageFlags.Ephemeral });
-                }
-                // check that the category is in this guild
-                if (interaction.guild.channels.cache.get(value).guild.id !== interaction.guild.id) {
-                    return interaction.reply({ content: 'That category is not in this guild', flags: MessageFlags.Ephemeral });
-                }
-                // check that the category is a category
-                if (interaction.guild.channels.cache.get(value).type !== ChannelType.GuildCategory) {
-                    return interaction.reply({ content: 'That channel is not a category', flags: MessageFlags.Ephemeral });
-                }
+                error = validateChannel(value, ChannelType.GuildCategory);
                 break;
             case 'staffrole':
-                // check that the role exists
-                if (!interaction.guild.roles.cache.get(value)) {
-                    return interaction.reply({ content: 'That role does not exist', flags: MessageFlags.Ephemeral });
-                }
-                // check that the role is in this guild
-                if (interaction.guild.roles.cache.get(value).guild.id !== interaction.guild.id) {
-                    return interaction.reply({ content: 'That role is not in this guild', flags: MessageFlags.Ephemeral });
-                }
+                error = validateRole(value);
                 break;
+        }
+
+        if (error) {
+            return interaction.reply({ content: error, flags: MessageFlags.Ephemeral });
         }
 
         await interaction.client.settingsManager.updateSetting(interaction.guild, setting, value).catch(err => {

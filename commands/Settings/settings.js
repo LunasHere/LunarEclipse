@@ -16,7 +16,13 @@ module.exports = {
                     { name: 'User Stats Channel', value: settings.userstatschannel ? `<#${settings.userstatschannel}>` : 'Not set', inline: false },
                     { name: 'Bot Stats Channel', value: settings.botstatschannel ? `<#${settings.botstatschannel}>` : 'Not set', inline: false },
                     { name: 'Ticket Category', value: settings.ticketcategory ? `${interaction.guild.channels.cache.get(settings.ticketcategory).name}` : 'Not set', inline: false },
-                    { name: 'Staff Role', value: settings.staffrole ? `<@&${settings.staffrole}>` : 'Not set', inline: false }
+                    { name: 'Staff Role', value: settings.staffrole ? `<@&${settings.staffrole}>` : 'Not set', inline: false },
+                    { name: 'Log Role Create', value: settings.logRoleCreate ? 'Enabled' : 'Disabled', inline: false },
+                    { name: 'Log Role Delete', value: settings.logRoleDelete ? 'Enabled' : 'Disabled', inline: false },
+                    { name: 'Log Member Ban Add', value: settings.logMemberBanAdd ? 'Enabled' : 'Disabled', inline: false },
+                    { name: 'Log Member Ban Remove', value: settings.logMemberBanRemove ? 'Enabled' : 'Disabled', inline: false },
+                    { name: 'Log Member Kick', value: settings.logMemberKick ? 'Enabled' : 'Disabled', inline: false },
+                    { name: 'Log Member Role Update', value: settings.logMemberRoleUpdate ? 'Enabled' : 'Disabled', inline: false }
                 ]);
             interaction.reply({ embeds: [embed] });
         }).catch(err => {
