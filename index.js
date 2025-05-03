@@ -101,39 +101,46 @@ client.settingsManager = new SettingsManager(client);
 client.cooldownManager = new CooldownManager(client);
 client.ticketManager = new TicketManager(client);
 
-// Update all guild stats
+// Utility function to update stats for a single guild
+async function updateGuildStats(guild, settings) {
+    await guild.members.fetch(); // Fetch all members to populate the cache
+
+    if (settings.memberstatschannel) {
+        const channel = guild.channels.cache.get(settings.memberstatschannel);
+        if (channel && channel.guild.id === guild.id) {
+            channel.setName(`All Members: ${guild.members.cache.size}`);
+        }
+    }
+
+    if (settings.userstatschannel) {
+        const channel = guild.channels.cache.get(settings.userstatschannel);
+        if (channel && channel.guild.id === guild.id) {
+            channel.setName(`Users: ${guild.members.cache.filter(member => !member.user.bot).size}`);
+        }
+    }
+
+    if (settings.botstatschannel) {
+        const channel = guild.channels.cache.get(settings.botstatschannel);
+        if (channel && channel.guild.id === guild.id) {
+            channel.setName(`Bots: ${guild.members.cache.filter(member => member.user.bot).size}`);
+        }
+    }
+}
+
+// Update all guild stats periodically
 async function updateAllGuilds() {
-    client.guilds.cache.forEach(async guild => {
-        await guild.members.fetch(); // Fetch all members to populate the cache
-        await client.settingsManager.getSettings(guild).then(settings => {
-            if(settings.memberstatschannel) {
-                const memberstatschannel = guild.channels.cache.get(settings.memberstatschannel);
-                if(memberstatschannel.guild.id !== guild.id) return;
-                if(memberstatschannel) {
-                    memberstatschannel.setName(`All Members: ${guild.members.cache.size}`);
-                }
-            }
-            if(settings.userstatschannel) {
-                const userstatschannel = guild.channels.cache.get(settings.userstatschannel);
-                if(userstatschannel.guild.id !== guild.id) return;
-                if(userstatschannel) {
-                    userstatschannel.setName(`Users: ${guild.members.cache.filter(member => !member.user.bot).size}`);
-                }
-            }
-            if(settings.botstatschannel) {
-                const botstatschannel = guild.channels.cache.get(settings.botstatschannel);
-                if(botstatschannel.guild.id !== guild.id) return;
-                if(botstatschannel) {
-                    botstatschannel.setName(`Bots: ${guild.members.cache.filter(member => member.user.bot).size}`);
-                }
-            }
-        }).catch(err => console.log(err));
-        await delay(1000);
-    });
-  
+    for (const guild of client.guilds.cache.values()) {
+        try {
+            const settings = await client.settingsManager.getSettings(guild);
+            await updateGuildStats(guild, settings);
+        } catch (err) {
+            console.error(`Error updating stats for guild ${guild.id}:`, err);
+        }
+        await delay(1000); // Delay to avoid rate limits
+    }
+
     console.log('All guild stats updated');
-    // Schedule the next run after 5 minutes
-    setTimeout(() => updateAllGuilds(), 5 * 60 * 1000);
+    setTimeout(updateAllGuilds, 5 * 60 * 1000); // Schedule the next run
 }
 
 function delay(ms) {
