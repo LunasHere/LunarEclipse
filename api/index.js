@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 
 // get port from config
 const config = require('../config.json');
@@ -9,7 +10,10 @@ function createApp() {
     const app = express();
     app.use(express.json());
     app.use(express.urlencoded());
-    
+    app.use(cors({
+        origin: ['http://localhost:3000'],
+        credentials: true,     
+    }));
     app.use('/api', routes);
     return app;
 }
