@@ -1,13 +1,15 @@
 const { REST, Routes, Client, GatewayIntentBits, Collection } = require('discord.js');
-const client = new Client({ intents: [
-    GatewayIntentBits.Guilds,
-	GatewayIntentBits.GuildMessages,
-	GatewayIntentBits.MessageContent,
-	GatewayIntentBits.GuildMembers,
-    GatewayIntentBits.GuildVoiceStates,
-    GatewayIntentBits.GuildMessageReactions,
-    GatewayIntentBits.GuildModeration,
-] });
+const client = new Client({
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildVoiceStates,
+        GatewayIntentBits.GuildMessageReactions,
+        GatewayIntentBits.GuildModeration,
+    ]
+});
 
 const fs = require('node:fs');
 const config = require('./config.json');
@@ -47,14 +49,14 @@ for (const folder of commandFolders) {
     for (const file of commandFiles) {
         const command = require(`./commands/${folder}/${file}`);
         commands.push(command.data.toJSON());
-	    // Ensure the command has the correct properties
-	    if ('data' in command && 'execute' in command) {
+        // Ensure the command has the correct properties
+        if ('data' in command && 'execute' in command) {
             // Register the command
-	    	client.commands.set(command.data.name, command);
-	    } else {
+            client.commands.set(command.data.name, command);
+        } else {
             // Log the error
-	    	client.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
-	    }
+            client.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+        }
     }
 }
 // Register the events in the events folder
@@ -76,20 +78,20 @@ const rest = new REST({ version: '10' }).setToken(config.token);
 
 // Register the commands
 (async () => {
-	try {
-		client.log(`Started refreshing ${commands.length} application (/) commands.`);
+    try {
+        client.log(`Started refreshing ${commands.length} application (/) commands.`);
 
         // Send the commands to the Discord API
-		const data = await rest.put(
-			Routes.applicationCommands(config.clientid),
-			{ body: commands },
-		);
-        
-		client.log(`Successfully reloaded ${data.length} application (/) commands.`);
-	} catch (error) {
+        const data = await rest.put(
+            Routes.applicationCommands(config.clientid),
+            { body: commands },
+        );
+
+        client.log(`Successfully reloaded ${data.length} application (/) commands.`);
+    } catch (error) {
         // Log the error
-		console.error(error);
-	}
+        console.error(error);
+    }
 })();
 
 // Login to Discord
@@ -154,3 +156,6 @@ function delay(ms) {
 client.on('ready', () => {
     updateAllGuilds();
 });
+
+// Start the API provided in api/index.js
+require('./api/index.js')(client);
