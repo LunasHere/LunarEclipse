@@ -6,7 +6,8 @@ class SettingsManager {
 
     async createSettings(guild) {
         return new Promise((resolve, reject) => {
-            this.client.db.query(`INSERT INTO settings (guild, settings) VALUES ('${guild.id}', '{}')`, (err, result) => {
+            this.client.db.query('INSERT INTO settings (guild, settings) VALUES (?, ?)', 
+                [guild.id, '{}'], (err, result) => {
                 if (err) {
                     console.error(err);
                     return reject(err);
@@ -18,7 +19,8 @@ class SettingsManager {
 
     async getSettings(guild) {
         return new Promise((resolve, reject) => {
-            this.client.db.query(`SELECT * FROM settings WHERE guild = '${guild.id}'`, (err, result) => {
+            this.client.db.query('SELECT * FROM settings WHERE guild = ?', 
+                [guild.id], (err, result) => {
                 if (err) {
                     console.error(err);
                     return reject(err);
@@ -41,14 +43,16 @@ class SettingsManager {
 
     async updateSetting(guild, setting, value) {
         return new Promise((resolve, reject) => {
-            this.client.db.query(`SELECT * FROM settings WHERE guild = '${guild.id}'`, (err, result) => {
+            this.client.db.query('SELECT * FROM settings WHERE guild = ?', 
+                [guild.id], (err, result) => {
                 if (err) {
                     console.error(err);
                     return reject(err);
                 }
                 const settings = result[0] ? JSON.parse(result[0].settings) : {};
                 settings[setting] = value;
-                this.client.db.query(`UPDATE settings SET settings = '${JSON.stringify(settings)}' WHERE guild = '${guild.id}'`, (err, result) => {
+                this.client.db.query('UPDATE settings SET settings = ? WHERE guild = ?', 
+                    [JSON.stringify(settings), guild.id], (err, result) => {
                     if (err) {
                         console.error(err);
                         return reject(err);
@@ -61,7 +65,8 @@ class SettingsManager {
 
     async deleteSettings(guild) {
         return new Promise((resolve, reject) => {
-            this.client.db.query(`DELETE FROM settings WHERE guild = '${guild.id}'`, (err, result) => {
+            this.client.db.query('DELETE FROM settings WHERE guild = ?', 
+                [guild.id], (err, result) => {
                 if (err) {
                     console.error(err);
                     return reject(err);
