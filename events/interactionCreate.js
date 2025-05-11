@@ -1,4 +1,4 @@
-const { Events, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ComponentType, MessageFlags } = require('discord.js');
+const { Events, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ComponentType, MessageFlags, ChannelType } = require('discord.js');
 
 module.exports = {
     name: Events.InteractionCreate,
@@ -60,7 +60,46 @@ async function handleButton(interaction) {
             );
 
         await interaction.showModal(modal);
+    } else if (interaction.customId.startsWith('lunarSetting_')) {
+        if (!interaction.member.permissions.has('Administrator')) {
+            return interaction.reply({ content: 'You do not have permission to do that!', flags: MessageFlags.Ephemeral });
+        }
+
+        // list of toggleable settings
+        const logSettings = [
+            'logRoleCreate', 'logRoleDelete', 'logMemberBanAdd',
+            'logMemberBanRemove', 'logMemberKick', 'logMemberRoleUpdate'
+        ];
+
+        const setting = interaction.customId.split('_')[1];
+        if (logSettings.includes(setting)) {
+            const settings = await interaction.client.settingsManager.getSettings(interaction.guild);
+            let currentValue = settings[setting];
+            if (currentValue === undefined) {
+                currentValue = false;
+            }
+
+            const newValue = !currentValue;
+            await interaction.client.settingsManager.updateSetting(interaction.guild, setting, newValue);
+            await interaction.reply({ content: `Setting \`${setting}\` has been set to \`${newValue}\``, flags: MessageFlags.Ephemeral });
+            return;
+        }
+
+        // if not a toggleable setting, open a modal for the setting
+        const settingmodal = new ModalBuilder()
+            .setTitle('Setting')
+            .setCustomId(`lunarSetting_${setting}`)
+            .addComponents(
+                new ActionRowBuilder().addComponents(
+                    new TextInputBuilder()
+                        .setCustomId('value')
+                        .setLabel(`Please enter a value for ${setting}`)
+                        .setStyle(TextInputStyle.Short)
+                )
+            );
+        await interaction.showModal(settingmodal);
     }
+
 }
 
 async function handleModal(interaction) {
@@ -68,5 +107,61 @@ async function handleModal(interaction) {
         const description = interaction.fields.getField('description', ComponentType.TextInput);
         const ticket = await interaction.client.ticketManager.createTicket(interaction.guild, interaction.user, description.value);
         await interaction.reply({ content: `Ticket created! [Click Here](${ticket.url})`, flags: MessageFlags.Ephemeral });
+    } else if (interaction.customId.startsWith('lunarSetting_')) {
+        const setting = interaction.customId.split('_')[1];
+        const value = interaction.fields.getField('value', ComponentType.TextInput).value;
+        let error = null;
+
+        const validateChannel = (channelId, type) => {
+            const channel = interaction.guild.channels.cache.get(channelId);
+            if (!channel) return 'That channel does not exist';
+            if (channel.guild.id !== interaction.guild.id) return 'That channel is not in this guild';
+            if (channel.type !== type) return `That channel is not a ${type === ChannelType.GuildText ? 'text' : 'voice'} channel`;
+            return null;
+        };
+        
+        const validateRole = (roleId) => {
+            const role = interaction.guild.roles.cache.get(roleId);
+            if (!role) return 'That role does not exist';
+            if (role.guild.id !== interaction.guild.id) return 'That role is not in this guild';
+            return null;
+        };
+
+        switch (setting) {
+            case 'modlogchannel':
+                error = validateChannel(value, ChannelType.GuildText);
+                break;
+            case 'memberstatschannel':
+            case 'userstatschannel':
+            case 'botstatschannel':
+                error = validateChannel(value, ChannelType.GuildVoice);
+                if (!error) {
+                    const channel = interaction.guild.channels.cache.get(value);
+                    if (setting === 'memberstatschannel') {
+                        channel.setName(`All Members: ${interaction.guild.memberCount}`);
+                    } else if (setting === 'userstatschannel') {
+                        channel.setName(`Users: ${interaction.guild.members.cache.filter(member => !member.user.bot).size}`);
+                    } else if (setting === 'botstatschannel') {
+                        channel.setName(`Bots: ${interaction.guild.members.cache.filter(member => member.user.bot).size}`);
+                    }
+                }
+                break;
+            case 'ticketcategory':
+                error = validateChannel(value, ChannelType.GuildCategory);
+                break;
+            case 'staffrole':
+                error = validateRole(value);
+                break;
+        }
+
+        if (error) {
+            return interaction.reply({ content: error, flags: MessageFlags.Ephemeral });
+        }
+
+        await interaction.client.settingsManager.updateSetting(interaction.guild, setting, value).catch(err => {
+            console.error(err);
+            return interaction.reply({ content: 'An error occurred while updating the setting', flags: MessageFlags.Ephemeral });
+        });
+        interaction.reply({ content: `Setting \`${setting}\` has been set to \`${value}\``, flags: MessageFlags.Ephemeral });
     }
 }
