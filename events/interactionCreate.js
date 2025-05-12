@@ -98,6 +98,28 @@ async function handleButton(interaction) {
                 )
             );
         await interaction.showModal(settingmodal);
+    } else if (interaction.customId.startsWith('lunarRoleMenu_')) {
+        const roleId = interaction.customId.split('_')[1];
+        const role = interaction.guild.roles.cache.get(roleId);
+        if (!role) {
+            return interaction.reply({ content: 'That role does not exist', flags: MessageFlags.Ephemeral });
+        }
+
+        if (interaction.member.roles.cache.has(roleId)) {
+            await interaction.member.roles.remove(roleId).then(() => {
+                interaction.reply({ content: `Removed role <@&${roleId}>`, flags: MessageFlags.Ephemeral });
+            }).catch(err => {
+                console.error(err);
+                interaction.reply({ content: 'An error occurred while removing the role', flags: MessageFlags.Ephemeral });
+            });
+        } else {
+            await interaction.member.roles.add(roleId).then(() => {
+                interaction.reply({ content: `Added role <@&${roleId}>`, flags: MessageFlags.Ephemeral });
+            }).catch(err => {
+                console.error(err);
+                interaction.reply({ content: 'An error occurred while adding the role', flags: MessageFlags.Ephemeral });
+            });
+        }
     }
 
 }
