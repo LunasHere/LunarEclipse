@@ -3,7 +3,7 @@
 [![Discord.js](https://img.shields.io/badge/discord.js-v14-blue.svg)](https://discord.js.org)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D16.9.0-brightgreen.svg)](https://nodejs.org/en/)
-[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/your-username/LunarEclipse/graphs/commit-activity)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/lunashere/LunarEclipse/graphs/commit-activity)
 
 A feature-rich Discord bot built with Discord.js, designed for enhancing server functionality and user engagement.
 
@@ -27,7 +27,7 @@ A feature-rich Discord bot built with Discord.js, designed for enhancing server 
 
 1. Clone the repository and navigate to directory
 ```bash
-git clone https://github.com/your-username/LunarEclipse.git
+git clone https://github.com/lunashere/LunarEclipse.git
 cd LunarEclipse
 ```
 
